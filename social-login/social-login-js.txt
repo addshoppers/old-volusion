@@ -1,0 +1,89 @@
+<!-- addshoppers social login js -->
+<script type="text/javascript">
+ // Init code
+function init() {
+   AddShoppersWidget.API.Event.bind("sign_in", createAccount);
+};
+
+// Create Account
+function createAccount() {
+    services = ['facebook', 'google', 'linkedin', 'twitter'];
+    var data = AddShoppersWidget.API.User.signed_data();
+    for( var i=0; i < services.length; i++ ) {
+        service = services[i];
+        if (AddShoppersWidget.API.User.signed(service)) {
+            var email = data[service + '_email'];
+            if (service == 'twitter') {
+                alert('popup get email');
+            };
+            if (email) {
+                if (service != 'facebook' && service !='twitter' ) {
+                      var name = data[service + '_firstname'] + ' ' + data[service + '_lastname'];
+                } else {
+                     var name = data[service + '_name'];
+                };
+                name = name.replace(/ /g, '-');
+                //populate signin box
+                var usrpass = "password"+name;
+
+                var modW = getURLParameter('modwhat');
+                if(modW){
+                    var firstN = data[service + '_firstname'];
+                    var lastN = data[service + '_lastname'];
+                    document.getElementsByName('ShipFirstName')[0].value = firstN;
+                    document.getElementsByName('ShipLastName')[0].value = lastN;
+                }
+
+                 if(window.location.pathname == "/login.asp"){
+                     document.getElementsByName('email')[0].value = email;
+                     document.getElementsByName('password')[0].value = usrpass;
+                  } else {
+                    document.getElementsByName('Email')[0].value = email;
+                    document.getElementsByName('Emailagain')[0].value = email;
+                    document.getElementsByName('password')[0].value = usrpass;
+                    document.getElementsByName('passwordagain')[0].value = usrpass;
+                  }
+
+                var submitme = getURLParameter('assubmit');
+                if(submitme == "true"){
+                    //document.getElementById('AccountSettingsForm').submit();
+                    $("#btnContinue").click();
+                }
+
+                break;
+            };
+       };
+    };
+}
+       
+// Bind events
+if (window.addEventListener) {
+    window.addEventListener("load", init, false);
+    } else {
+        document.onreadystatechange = function() {
+         if(document.readyState in {loaded: 1, complete: 1}) {
+             document.onreadystatechange = null;
+              init();
+         }
+    }
+} 
+
+//go to login page on button click
+function goToLogin() {
+    var data = AddShoppersWidget.API.User.signed_data();
+    var asemail = data['facebook_email'];
+    //alert(asemail);
+    if(!asemail){
+        setTimeout(goToLogin, 1000);
+    } else {
+        var theurl = location.protocol + '//' + location.host;
+        var dispatch="/AccountSettings.asp?AddNewCustomer=Y&ReturnTo=&assubmit=true";
+        document.location.href = theurl + dispatch;
+    }
+}
+
+
+function getURLParameter(name) {
+  return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
+}
+</script>
