@@ -1,0 +1,6 @@
+1. user clicks sign in
+2. JS will try and submit the username and password form on the /login.asp page, if that fails (means there is no account) then
+3. it will click the "continue" button on the /login.asp page (may need to use jqery selector $('somebutton a')[0].click(); )
+4. on the registration page it should auto populate both email and both password fields
+5. then it will automatically "click" the continue button on that page 
+6. the user will be brought to where they enter their billing info.
