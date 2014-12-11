@@ -1,0 +1,147 @@
+
+<script type="text/javascript">
+//replace sharing buttons with ours
+jQuery('#v65-share-buttons-container').html('<div class="share-buttons share-buttons-panel" data-style="small" data-counter="false" data-oauth="true" data-hover="false" data-promo-callout="top" data-buttons="twitter,facebook,google,email,pinterest"></div>');
+
+
+//add social login buttons
+jQuery('#div_articleid_95').after('<div class="social-commerce-signin-google" data-style="logoandtext" data-size="small"></div>');
+jQuery('#div_articleid_95').after('<div class="social-commerce-signin-paypal" data-style="logoandtext" data-size="small"></div>');
+jQuery('#div_articleid_95').after('<div class="social-commerce-signin-facebook" data-style="logoandtext" data-size="small"></div>');
+jQuery('#div_articleid_95').after('<br>--- or ---<br>');
+
+</script>
+
+<!-- AddShoppers Social Login JS -->
+<script type="text/javascript"> 
+// Init code					
+function init() {
+   AddShoppersWidget.API.Event.bind("sign_in", createAccount);		
+};
+// ------- Create Account 
+function createAccount(params) {		
+   if (params.source == "social_login") {				
+		services = ['facebook', 'google', 'linkedin', 'twitter', 'paypal'];
+		var data = AddShoppersWidget.API.User.signed_data(); 
+		for( var i=0; i < services.length; i++ ) {				
+			service = services[i];
+			if (AddShoppersWidget.API.User.signed(service)) {
+        		var asemail = data[service + '_email'];
+        		if (service == 'twitter') {
+           			//alert('popup get asemail'); 
+        		};
+        		if (asemail) {
+          			if (service !='twitter' ) {				   
+        		  		var name = data[service + '_firstname'] + '_' + data[service + '_lastname']; 
+          			} else {
+	       				var name = data[service + '_name']; 
+          			};
+	     			//name = name.replace(/ /g, '­-');
+          			//var loc = "/create.php?asusrnm=" + name + "&aseml=" + asemail + "&data=" + JSON.stringify(data);
+
+          			var asSocialMail = asemail;
+	      			var asSocialGenPass = generatePassword();
+	      			document.getElementById('asEmail').value =asSocialMail;
+					document.getElementById('asEmailAgain').value =asSocialMail;
+					document.getElementById('asPass').value =asSocialGenPass;
+					document.getElementById('asPassAgain').value =asSocialGenPass;
+					setCookie('ascsSocialLogin', 1, 1);
+					$('#asbtnContinue').click();
+	      			break; 
+        		};
+     		}; 
+  		};	
+  	};				
+}
+					
+// ------- Bind events
+if (window.addEventListener) {			
+   window.addEventListener("load", init, false); 
+} else {
+   document.onreadystatechange = function() { 
+    if(document.readyState in {loaded: 1, complete: 1}) {
+	document.onreadystatechange = null; 
+       init();			
+    } 
+  }					
+} 
+// ------- Get Pass
+function generatePassword() {
+    var length = 8,
+        charset = "abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
+        retVal = "";
+    for (var i = 0, n = charset.length; i < length; ++i) {
+        retVal += charset.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+}
+// ------- redirect if you came frok social login
+asThisPage = document.URL;
+if (asThisPage.search("AccountSettings.asp") > 0 ){
+    asSocialRef = document.referrer;
+    if (asSocialRef.search("login.asp") > 0 ){
+        if(checkCookie('ascsSocialLogin')){
+            var asSocialCookie = getCookie('ascsSocialLogin');
+            if(asSocialCookie == 1){
+                setCookie('ascsSocialLogin', 2, 1);
+                window.location.href = '/myaccount.asp';
+            }
+        }
+    }
+}
+
+// ------- sets the cookie
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toGMTString();
+    document.cookie = cname + "=" + cvalue + "; " + expires + ";path=/";
+}
+
+// ------- gets the cookie value returned
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0; i<ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') c = c.substring(1);
+        if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+    }
+    return "";
+}
+
+// ------- checks if cookie exists and returns true or false
+function checkCookie(ascscname) {
+    var ascscval = getCookie(ascscname);
+    if (ascscval != "" && ascscval != null && ascscval != undefined) {
+        //cookie is present
+        return true;
+    } else {
+        return false;
+    }
+}
+
+</script>
+<form id="SocialAccountSettingsForm" accept-charset="utf-8" action="/AccountSettings.asp" method="POST" style="display:none;">
+        <input type="hidden" name="modwhat" value="">
+        <input type="hidden" name="BillingID" value="">
+        <input type="hidden" name="ShipID" value="">
+        <input type="hidden" name="CCardID" value="">
+        <input type="hidden" name="OrderPlaced" value="">
+        <input type="hidden" name="ReturnTo" value="">
+        <input type="hidden" name="AddNewCustomer" value="Y">
+        <input type="hidden" name="NewSignup" value="Y">
+        <input type="hidden" name="CustomerID" value="">
+        <input type="hidden" name="Anonymous" value="">
+        <input type="hidden" name="DirectLink" value="">
+        <input name="emailsubscriber" value="Y" size="20" maxlength="20" type="checkbox" checked="checked" style="display:none;">
+        <input type="image" src="" style="display:none;" id="asbtnContinue" name="btnContinue" alt="Continue" border="0">
+
+        <input name="Email" value="" style="display:none;" id="asEmail">
+        <input name="Emailagain" value="" style="display:none;" id="asEmailAgain">
+
+        <input name="password" style="display:none;" type="password" value="" id="asPass">
+        <input name="passwordagain" style="display:none;" type="password" value="" id="asPassAgain">
+</form>
+
+<!-- END AddShoppers Social Login JS -->
