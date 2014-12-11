@@ -70,7 +70,7 @@ if (asThisPage.search("AccountSettings.asp") > 0 ){
             var asSocialCookie = getCookie('ascsSocialLogin');
             if(asSocialCookie == 1){
                 setCookie('ascsSocialLogin', 2, 1);
-                window.location.href = 'https://www.airrattle.com/myaccount.asp';
+                window.location.href = '/myaccount.asp';
             }
         }
     }
@@ -108,7 +108,7 @@ function checkCookie(ascscname) {
 }
 
 </script>
-<form id="SocialAccountSettingsForm" accept-charset="utf-8" action="//AccountSettings.asp" method="POST" style="display:none;">
+<form id="SocialAccountSettingsForm" accept-charset="utf-8" action="/AccountSettings.asp" method="POST" style="display:none;">
         <input type="hidden" name="modwhat" value="">
         <input type="hidden" name="BillingID" value="">
         <input type="hidden" name="ShipID" value="">
