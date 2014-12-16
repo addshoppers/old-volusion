@@ -1,15 +1,18 @@
 
 <script type="text/javascript">
-//replace sharing buttons with ours
-jQuery('#v65-share-buttons-container').html('<div class="share-buttons share-buttons-panel" data-style="small" data-counter="false" data-oauth="true" data-hover="false" data-promo-callout="top" data-buttons="twitter,facebook,google,email,pinterest"></div>');
 
+//replace sharing buttons with ours
+if(jQuery('#v65-share-buttons-container').length > 0){
+    jQuery('#v65-share-buttons-container').html('<div class="share-buttons share-buttons-panel" data-style="small" data-counter="false" data-oauth="true" data-hover="false" data-promo-callout="top" data-buttons="twitter,facebook,google,email,pinterest"></div>');
+}
 
 //add social login buttons
-jQuery('#div_articleid_95').after('<div class="social-commerce-signin-google" data-style="logoandtext" data-size="small"></div>');
-jQuery('#div_articleid_95').after('<div class="social-commerce-signin-paypal" data-style="logoandtext" data-size="small"></div>');
-jQuery('#div_articleid_95').after('<div class="social-commerce-signin-facebook" data-style="logoandtext" data-size="small"></div>');
-jQuery('#div_articleid_95').after('<br>--- or ---<br>');
-
+if(jQuery('#div_articleid_95').length > 0){
+    jQuery('#div_articleid_95').after('<div class="social-commerce-signin-google" data-style="logoandtext" data-size="small"></div>');
+    jQuery('#div_articleid_95').after('<div class="social-commerce-signin-paypal" data-style="logoandtext" data-size="small"></div>');
+    jQuery('#div_articleid_95').after('<div class="social-commerce-signin-facebook" data-style="logoandtext" data-size="small"></div>');
+    jQuery('#div_articleid_95').after('<br>--- or ---<br>');
+}
 </script>
 
 <!-- AddShoppers Social Login JS -->
@@ -40,7 +43,7 @@ function createAccount(params) {
           			//var loc = "/create.php?asusrnm=" + name + "&aseml=" + asemail + "&data=" + JSON.stringify(data);
 
           			var asSocialMail = asemail;
-	      			var asSocialGenPass = generatePassword();
+	      			var asSocialGenPass = generatePassword(asemail);
 	      			document.getElementById('asEmail').value =asSocialMail;
 					document.getElementById('asEmailAgain').value =asSocialMail;
 					document.getElementById('asPass').value =asSocialGenPass;
@@ -66,13 +69,8 @@ if (window.addEventListener) {
   }					
 } 
 // ------- Get Pass
-function generatePassword() {
-    var length = 8,
-        charset = "abcdefghijklnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789",
-        retVal = "";
-    for (var i = 0, n = charset.length; i < length; ++i) {
-        retVal += charset.charAt(Math.floor(Math.random() * n));
-    }
+function generatePassword(theinfo) {
+    var retVal = btoa(theinfo);
     return retVal;
 }
 // ------- redirect if you came frok social login
