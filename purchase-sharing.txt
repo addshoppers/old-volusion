@@ -1,0 +1,13 @@
+Code to make purchase sharing share out the item that was purchased:
+
+Add this to Article 130, "ROI_Javascripts" in the code section:
+
+<script type="text/javascript">
+AddShoppersTracking = {
+    campaign: 'PurchaseSharing',
+    name: OrderDetails[0][3],
+    price: OrderDetails[0][5],
+    url: 'http://www.airrattle.com/ProductDetails.asp?ProductCode=' + OrderDetails[0][2],
+    image: 'https://www.airrattle.com/v/vspfiles/photos/' + OrderDetails[0][2] + '-2.jpg'
+};
+</script>
