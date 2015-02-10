@@ -1,0 +1,15 @@
+Add this code to the main template in Volusion to add the category IDs to products for the Trending Wall:
+
+	<!-- AddShoppers Category IDs for products -->
+	<script type="text/javascript">
+	if (breadCrumb != "||") {
+		var categoryIDs = breadCrumb.substring(1, breadCrumb.length-1).split('||');
+		var index;
+
+		for (index = 0; index < categoryIDs.length; ++index) {
+	   	 // multiple category IDs here.
+	   	 AddShoppersTracking = { category: categoryIDs[index] };
+		}
+	}
+	</script>
+	<!-- END AddShoppers Category IDs for products -->
