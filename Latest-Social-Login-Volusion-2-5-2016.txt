@@ -1,0 +1,208 @@
+<!-- AddShoppers Social Login JS --> 
+<!-- add sopcial login buttons -->
+//add social login buttons
+if(jQuery('#div_articleid_95').length > 0){
+    jQuery('#div_articleid_95').after('<div class="social-commerce-signin-google" data-style="logoandtext" data-size="small"></div>');
+    jQuery('#div_articleid_95').after('<div class="social-commerce-signin-paypal" data-style="logoandtext" data-size="small"></div>');
+    jQuery('#div_articleid_95').after('<div class="social-commerce-signin-facebook" data-style="logoandtext" data-size="small"></div>');
+    jQuery('#div_articleid_95').after('<br>--- or ---<br>');
+}
+</script>
+
+
+<!-- register form -->
+<form id="asRegisterFormSL" accept-charset="utf-8" action="/AccountSettings.asp" method="POST" style="display:none;">
+        <input type="hidden" name="modwhat" value="">
+        <input type="hidden" name="BillingID" value="">
+        <input type="hidden" name="ShipID" value="">
+        <input type="hidden" name="CCardID" value="">
+        <input type="hidden" name="OrderPlaced" value="">
+        <input type="hidden" name="ReturnTo" value="">
+        <input type="hidden" name="AddNewCustomer" value="Y">
+        <input type="hidden" name="NewSignup" value="Y">
+        <input type="hidden" name="CustomerID" value="">
+        <input type="hidden" name="Anonymous" value="">
+        <input type="hidden" name="DirectLink" value="">
+        <input name="emailsubscriber" value="Y" size="20" maxlength="20" type="checkbox" checked="checked" style="display:none;">
+        <input type="image" src="" style="display:none;" id="asbtnContinue" name="btnContinue" alt="Continue" border="0">
+
+        <input name="Email" value="" style="display:none;" id="asEmail">
+        <input name="Emailagain" value="" style="display:none;" id="asEmail2">
+
+        <input name="password" style="display:none;" type="password" value="" id="asPass">
+        <input name="passwordagain" style="display:none;" id="asPass2" ype="password" value="">
+</form>
+
+<!-- login form -->
+<form name="loginform" id="asLoginFormSL" method="post" action="https://www.tulleshop.com/login.asp" style="display:none !important;">
+    <input type="text" id="aslEmail" name="email" value="" size="30" maxlength="75">
+    <input type="password" id="aslPass" name="password" size="20" maxlength="20">
+    <input type="hidden" name="CustomerNewOld" value="old">
+</form>
+<!-- ########################### --> 
+  
+
+
+
+
+
+
+  
+<script type="text/javascript">
+// Init code          
+function init() {
+   AddShoppersWidget.API.Event.bind("sign_in", createAccount);    
+};
+// Create Account 
+function createAccount(params) {    
+   if (params.source == "social_login") {       
+    services = ['facebook', 'google', 'linkedin', 'twitter', 'paypal'];
+    var data = AddShoppersWidget.API.User.signed_data(); 
+    for( var i=0; i < services.length; i++ ) {        
+      service = services[i];
+      if (AddShoppersWidget.API.User.signed(service)) {
+            var email = data[service + '_email'];
+            if (service == 'twitter') {
+                //alert('popup get email'); 
+                var email = prompt("Please enter your email", "");
+            };
+            if (email) {
+                if (service !='twitter' ) {          
+                  var name = data[service + '_firstname'] + '_' + data[service + '_lastname']; 
+                } else {
+                var name = data[service + '_name']; 
+                };
+                //name = name.replace(/ /g, '­-');
+                name = name.replace("_", " ");
+                var asFName = name.substr(0,name.indexOf(' '));
+                var asLname = name.substr(name.indexOf(' ')+1);
+
+                console.log("data: "+ data.signature);
+                console.log("First: "+ asFName +" Last: "+ asLname);
+                var asSocialMail = email;
+                var asSocialGenPass = "";
+                //console.log(asFName + asLname + asSocialMail + asSocialGenPass );
+                console.log("submitting");
+                $.ajax({
+                    type: "GET",
+                    url: "https://www.addshoppers.com/MERCHANT/MERCHANT/gen.php",
+                    data: { data: data,email: asSocialMail },
+                    success: function (data) {
+                        //console.log(data);
+                        if(data == "false"){
+                            console.log('failboat');
+                        } else {
+                            asSocialGenPass = data;
+                            asSocialGenPass = asSocialGenPass.replace("true|","");
+                            console.log(asSocialGenPass);
+
+                            //try to login
+                            setCookie('asSocialMail', asSocialMail, 1);
+                            setCookie('asSocialGenPass', asSocialGenPass, 1);
+                            setCookie('ascsSocialLogin', 3, 1);
+                            jQuery("#div_articleid_94 input[name*='email']").val(asSocialMail);
+                            jQuery("#div_articleid_94 input[name*='password']").val(asSocialGenPass);
+                            jQuery("#div_articleid_94 input[name*='imageField2']").click();
+                        }
+                    }
+                });
+              break; 
+            };
+        }; 
+      };  
+    };        
+}
+          
+// Bind events
+if (window.addEventListener) {      
+   window.addEventListener("load", init, false); 
+} else {
+   document.onreadystatechange = function() { 
+    if(document.readyState in {loaded: 1, complete: 1}) {
+  document.onreadystatechange = null; 
+       init();      
+    } 
+  }         
+} 
+
+//try to register if login failed
+var asSocialCookieL = getCookie('ascsSocialLogin');
+if(asSocialCookieL == 3){
+    if(jQuery(".v65-error-list-wrapper").length > 0){
+        //try to register
+        var asSocialMail = getCookie('asSocialMail');
+        var asSocialGenPass = getCookie('asSocialGenPass');
+
+        document.getElementById('asEmail').value = asSocialMail;
+        document.getElementById('asEmail2').value = asSocialMail;
+        document.getElementById('asPass').value = asSocialGenPass;
+        document.getElementById('asPass2').value = asSocialGenPass;
+        //get rid of login cookies
+        setCookie('asSocialMail', "X", -1);
+        setCookie('asSocialGenPass', "X", -1);
+
+        setCookie('ascsSocialLogin', 1, 1);
+        jQuery('#asbtnContinue').click(); 
+    }
+}
+
+// ------- redirect if you came frok social login
+asThisPage = document.URL;
+if (asThisPage.search("AccountSettings.asp") > 0 ){
+    asSocialRef = document.referrer;
+    if (asSocialRef.search("login.asp") > 0 ){
+        if(checkCookie('ascsSocialLogin')){
+            var asSocialCookie = getCookie('ascsSocialLogin');
+            if(asSocialCookie == 1){
+                setCookie('ascsSocialLogin', 2, 1);
+                window.location.href = '/myaccount.asp';
+            }
+        }
+    }
+}
+
+//-------clear cookies if in my account already
+if(jQuery("#content_area img").attr("src") == "v/vspfiles/templates/tulleshopcom/images/headings/heading_MyAccount.gif"){
+    console.log("clear cookie");
+    setCookie('asSocialMail', "X", -1);
+    setCookie('asSocialGenPass', "X", -1);
+    setCookie('ascsSocialLogin', 2, 1);
+    setCookie('ascsSocialLogin', 2, -1);
+}
+
+//-------set cookie
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+d.toGMTString();
+    document.cookie = cname + "=" + cvalue + "; " + expires + ";path=/";
+}
+
+// ------- gets the cookie value returned
+function getCookie(cname) {
+var name = cname + "=";
+var ca = document.cookie.split(';');
+for(var i=0; i<ca.length; i++) {
+var c = ca[i];
+while (c.charAt(0)==' ') c = c.substring(1);
+if (c.indexOf(name) != -1) return c.substring(name.length, c.length);
+}
+return "";
+}
+
+// ------- checks if cookie exists and returns true or false
+function checkCookie(ascscname) {
+var ascscval = getCookie(ascscname);
+if (ascscval != "" && ascscval != null && ascscval != undefined) {
+//cookie is present
+return true;
+} else {
+return false;
+}
+}
+</script>
+<!-- ########################### --> 
+<!-- END AddShoppers Social Login JS -->
+
+
+
